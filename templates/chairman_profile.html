@@ -1,0 +1,172 @@
+...<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='form_style.css') }}">
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+           
+         
+            .Gt
+            {
+                font-size: 20px;
+                margin-left: 40px;
+                display: none;
+            }
+            .GR:hover .Gt
+            {
+               display: block;
+            }
+            #or 
+            {
+                text-align: center;
+            }
+        </style>
+</head>
+
+<body>
+    <input type="checkbox" id="nav-toggle">
+    <div class="slidebar">
+        <div class="slidebar-brand">
+            <h2>Chairman profile</h2>
+        </div>
+    
+        <div class="slidebar-manu">
+            <ul>
+                <li>
+                    <a href="{{ url_for('chairman_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('edit_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span> Edit Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Result</span></a>
+                </li>           
+                <li>
+                <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Attendance</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('show_feedback') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Show Feedback</span></a>
+                </li>
+                <li>
+                        <a href="{{ url_for('add_course') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                            <span>ADD Course</span></a>
+                </li> 
+                <li>
+                    <a href="{{ url_for('student_course_assign') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Student Course Assign</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('teacher_course_assign') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Teacher Course Assign</span></a>
+                </li> 
+                <li>
+                    <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
+                        <span>Change Password</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('notice_board') }}" id="s4"><span><i class="fa-sharp fa-solid fa-bell"></i></span>
+                        <span>Notice Board</span></a>
+                </li>
+    
+            </ul>
+    
+            <ul class="Special">
+    
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span><i class="fa fa-sign-out"></i></span>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+    
+            </ul>
+        </div>
+    </div>
+    
+    
+    <div class="main-content">
+        <header>
+            <h1 class="menu">
+                <label for="nav-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </label>
+            </h1>
+    
+    
+            <div class="logo">
+                <img src="static/justlogo.jpg" width="70px" height="70px" alt="">
+            </div>
+            <div>
+                <h3 id="or">Jashore University of Science and Tecnology</h3>
+            </div>
+    
+            <div class="icon">
+                <ul>
+                    <li>
+                        <a href="Edit.html"><i class="fa fa-user"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <main>
+           <div class="profile-info">
+            <img src="{{ url_for('static', filename='uploads/' + profile['photo']) if profile.get('photo') else url_for('static', filename='uploads/default.jpg') }}" 
+                 alt="Profile Photo" 
+                 class="profile-photo"><br><br>
+                <h3>{{ profile['name'] }}</h3><br>
+                <p> {{ profile['designation'] }}</p><br>
+                <p>Department of {{ profile['department'] }}</p><br>
+            </div>
+            <br>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li><br>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+            <br>
+            <form action="{{ url_for('teacher_profile') }}" method="POST" class="update-form">
+                <label>Name:</label><br>
+                <input type="text" name="name" value="{{ profile['name'] }}" required disabled><br>
+                <label>Designation:</label><br>
+                <input type="text" name="designation" value="{{ profile['designation'] }}" required disabled><br>
+                <label>Department:</label><br>
+                <input type="text" name="department" value="{{ profile['department'] }}" required disabled><br>
+                <label>Present Address:</label><br>
+                <input type="text" name="present_address" value="{{ profile['present_address'] }}"  required disabled>
+                <label>Permanent Address:</label><br>
+                <input type="text" name="permanent_address" value="{{ profile['permanent_address'] }}" required disabled>
+                <label>Date of Birth:</label><br>
+                <input type="date" name="dob" value="{{ profile['dob'] }}" required disabled><br>
+                <label>Contact Number:</label><br>
+                <input type="text" name="mobile_number" value="{{ profile['mobile_number'] }}" required disabled><br>
+                <label>Email Address:</label><br>
+                <input type="email" name="email" value="{{ profile['email'] }}" required disabled><br>
+            </form>
+    
+        </main>
+    
+    </div>
+    
+    <div>
+    </div>
+    
+</body>
+
+</html>
+...

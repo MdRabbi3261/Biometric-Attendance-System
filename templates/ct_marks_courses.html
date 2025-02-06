@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT Marks - Courses</title>
+</head>
+<body>
+    <h1>CT Marks - Select a Course</h1>
+    <nav>
+        {% for course in courses %}
+        <a href="{{ url_for('course_ct_marks', course_name=course['course_name']) }}">{{ course['course_name'] }}</a>
+        {% endfor %}
+    </nav>
+</body>
+</html>

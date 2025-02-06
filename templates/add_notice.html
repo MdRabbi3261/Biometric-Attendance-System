@@ -1,0 +1,303 @@
+...<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='form_style.css') }}">
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f9;
+                margin: 0;
+                padding: 0;
+            }
+    
+            .container {
+                width: 80%;
+                margin: 30px auto;
+                background-color: white;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+    
+            .header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+    
+            .header h1 {
+                font-size: 2.5em;
+                color: #333;
+            }
+    
+            .add-notice {
+                margin-bottom: 30px;
+            }
+    
+            .add-notice label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+            }
+    
+            .add-notice input,
+            .add-notice textarea {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+    
+            .add-notice button {
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+            .add-notice button:hover {
+                background-color: #45a049;
+            }
+    
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+    
+            table th,
+            table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+    
+            table th {
+                background-color: #f4f4f4;
+                color: #333;
+            }
+    
+            .no-notices {
+                text-align: center;
+                color: #888;
+                font-size: 1.5em;
+            }
+        </style>
+</head>
+
+<body>
+    <input type="checkbox" id="nav-toggle">
+    <div class="slidebar">
+        <div class="slidebar-brand">
+            <h2>Staff profile</h2>
+        </div>
+    
+        <div class="slidebar-manu">
+            <ul>
+                <li>
+                    <a href="{{ url_for('staff_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('edit_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Edit Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_notice') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>ADD Notice</span></a>
+                </li>
+                 
+                <li>
+                    <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
+                        <span>Change Password</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('notice_board') }}" id="s4"><span><i class="fa-sharp fa-solid fa-bell"></i></span>
+                        <span>Notice Board</span></a>
+                </li>
+    
+            </ul>
+    
+            <ul class="Special">
+    
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span><i class="fa fa-sign-out"></i></span>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+    
+            </ul>
+        </div>
+    </div>
+    
+    
+    <div class="main-content">
+        <header>
+            <h1 class="menu">
+                <label for="nav-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </label>
+            </h1>
+    
+    
+            <div class="logo">
+                <img src="static/justlogo.jpg" width="70px" height="70px" alt="">
+            </div>
+            <div>
+                <h3 id="or">Jashore University of Science and Tecnology</h3>
+            </div>
+    
+            <div class="icon">
+                <ul>
+                    <li>
+                        <a href="Edit.html"><i class="fa fa-user"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <main>
+            <body>
+                <div class="container">
+                    <!-- Flash Messages -->
+                        
+                    <div class="header">
+                        <h1>Notice Board</h1>
+                        <p>View and add notices below. Only staff can add notices.</p>
+                    </div>
+            
+                    <!-- Notice Board Section -->
+                    <div class="add-notice">
+                        <h2>Add New Notice</h2>
+                        <form id="addNoticeForm" method="POST" action="/add_notice" enctype="multipart/form-data">
+                            <label for="notice_title">Title</label>
+                            <input type="text" id="notice_title" name="title" placeholder="Enter the title" required>
+                        
+                            <label for="notice_details">Details</label>
+                            <textarea id="notice_details" name="content" placeholder="Enter the notice details" required></textarea>
+                        
+                            <label for="posted_by">Posted By</label>
+                            <input type="text" id="posted_by" name="posted_by" placeholder="Your name" required>
+                        
+                            <label for="notice_date">Date</label>
+                            <input type="date" id="notice_date" name="date" required>
+                        
+                            <label for="notice_file">Upload File</label>
+                            <input type="file" id="notice_file" name="file" accept=".pdf, .jpg, .jpeg, .png">
+                            {% with messages = get_flashed_messages(with_categories=True) %}
+                            {% if messages %}
+                            <div>
+                                {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+                            <button type="submit">Add Notice</button>
+                        </form>
+                        
+                    </div>
+                       
+                        
+
+
+                    <!--<div id="noticesSection">
+                        <h2>All Notices</h2>
+                        <table id="noticeTable">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Posted By</th>
+                                    <th>Date</th>
+                                    <th>content</th>
+                                </tr>
+                            </thead>
+                            <tbody id="noticesBody">
+                                <tr class="no-notices">
+                                    <td colspan="4">No notices available.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>-->
+                </div>
+            
+                <script>
+                    // Fetch and display all notices
+                    
+            
+                    // Add a new notice
+                    function addNotice() {
+                        const title = document.getElementById("notice_title").value;
+                        const content = document.getElementById("notice_details").value;
+                        const postedBy = document.getElementById("posted_by").value;
+                        const date = document.getElementById("notice_date").value;
+            
+                        if (!title || !content || !postedBy || !date) {
+                            alert("Please fill in all fields.");
+                            return;
+                        }
+            
+                        const data = {
+                            title: title,
+                            content: content,
+                            posted_by: postedBy,
+                            date: date,
+                        };
+            
+                        fetch("/add_notice", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(data),
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Failed to add notice.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                alert(data.message);
+                                document.getElementById("addNoticeForm").reset();
+                                fetchNotices(); // Refresh notices
+                            })
+                            .catch(error => {
+                                console.error("Error adding notice:", error);
+                                alert("An error occurred. Please try again.");
+                            });
+                    }
+            
+                    // Fetch notices on page load
+                    
+                </script>
+            </body>
+        </main>
+    
+    </div>
+    
+    <div>
+    </div>
+    
+</body>
+
+</html>
+...
+
+
+
+
+
+
+
+

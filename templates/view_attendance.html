@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='form_style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+
+    
+           
+         
+            .Gt
+            {
+                font-size: 20px;
+                margin-left: 40px;
+                display: none;
+            }
+            .GR:hover .Gt
+            {
+               display: block;
+            }
+            #or 
+            {
+                text-align: center;
+            }
+      
+        body {
+           
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #333;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .filter-group {
+            width: 48%;
+        }
+
+        .filter-group label {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .filter-group button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .filter-group button:hover {
+            background-color: #45a049;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .attendance-table th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #888;
+            font-size: 1.5em;
+            margin-top: 30px;
+        }
+        
+        
+    </style>
+</head>
+
+<body>
+    <input type="checkbox" id="nav-toggle">
+    <div class="slidebar">
+        <div class="slidebar-brand">
+            <h2>{{ user_type.capitalize() }} Profile</h2>  <!-- Dynamically change title -->
+        </div>
+        <div class="slidebar-manu">
+            <ul>
+                <!-- Menu links can be shown differently based on user_type -->
+                {% if user_type == 'student' %}
+                <li>
+                    <a href="{{ url_for('student_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('edit_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span> Edit Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Result</span></a>
+                </li>
+                
+                <li>
+                    <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Attendance</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('feedback') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Feedback</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('teacher_course_assign') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Teacher Course Assign</span></a>
+                </li>
+                
+                <li>
+                    <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
+                        <span>Change Password</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('notice_board') }}" id="s4"><span><i class="fa-sharp fa-solid fa-bell"></i></span>
+                        <span>Notice Board</span></a>
+                </li>
+                {% elif user_type == 'teacher' %}
+                <li>
+                    <a href="{{ url_for('teacher_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('edit_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span> Edit Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>ADD Result</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Result</span></a>
+                </li>           
+                <li>
+                <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                    <span>View Attendance</span></a>
+                <li>
+                    <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
+                        <span>Change Password</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('notice_board') }}" id="s4"><span><i class="fa-sharp fa-solid fa-bell"></i></span>
+                        <span>Notice Board</span></a>
+                </li>
+                    
+                {% elif user_type == 'chairman' %}
+                    
+                    
+                        <li>
+                            <a href="{{ url_for('student_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                                <span>Profile</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('edit_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                                <span> Edit Profile</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('view_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                                <span>View Result</span></a>
+                        </li>
+                        
+                        <li>
+                            <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                                <span>View Attendance</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('show_feedback') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                                <span>Show Feedback</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('add_course') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                                <span>ADD Course</span></a>
+                    </li> 
+                    <li>
+                        <a href="{{ url_for('student_course_assign') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                            <span>Student Course Assign</span></a>
+                </li> 
+                        <li>
+                            <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
+                                <span>Change Password</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('notice_board') }}" id="s4"><span><i class="fa-sharp fa-solid fa-bell"></i></span>
+                                <span>Notice Board</span></a>
+                        </li>
+                    
+                
+                {% endif %}
+            </ul>
+            <ul class="Special">
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span><i class="fa fa-sign-out"></i></span>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1 class="menu">
+                <label for="nav-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </label>
+            </h1>
+
+            <div class="logo">
+                <img src="static/justlogo.jpg" width="70px" height="70px" alt="">
+            </div>
+            <div>
+                <h3 id="or">Jashore University of Science and Technology</h3>
+            </div>
+
+            <div class="icon">
+                <ul>
+                    <li>
+                        <a href="Edit.html"><i class="fa fa-user"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <main>
+            <div class="container">
+                <div class="header">
+                    <h1>View Attendance</h1>
+                    <p>Select the filters below to view the attendance records.</p>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="filters">
+                    <!-- Year & Semester Filter -->
+                    <div class="filter-group">
+                        <label for="year-semester">Select Year & Semester:</label>
+                        <select id="year-semester" name="year-semester" onchange="loadCourses()">
+                            <option value="">--Select Year & Semester--</option>
+                            <option value="1-1">1-1</option>
+                            <option value="1-2">1-2</option>
+                            <option value="2-1">2-1</option>
+                            <option value="2-2">2-2</option>
+                            <option value="3-1">3-1</option>
+                            <option value="3-2">3-2</option>
+                            <option value="4-1">4-1</option>
+                            <option value="4-2">4-2</option>
+                        </select>
+                    </div>
+
+                    <!-- Course Code Filter (Initially empty) -->
+                    <div class="filter-group">
+                        <label for="course-code">Select Course Code:</label>
+                        <select id="course-code" name="course-code" disabled>
+                            <option value="">--Select Course--</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit Button to Filter Attendance -->
+                    <div class="filter-group">
+                        <button onclick="viewAttendance()">View Attendance</button>
+                    </div>
+                </div>
+
+                <!-- Attendance Table Section -->
+                <div id="attendanceSection" class="attendance-section">
+                    <table class="attendance-table" id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Student Name</th>
+                                <th>Total Classes</th>
+                                <th>Classes Attended</th>
+                                <th>Attendance Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="no-results">
+                                <td colspan="5">No attendance records available. Please apply filters to view data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Function to load courses based on selected Year & Semester
+        function loadCourses() {
+            const yearSemester = document.getElementById('year-semester').value;
+            const courseSelect = document.getElementById('course-code');
+
+            if (yearSemester) {
+                courseSelect.disabled = false;
+                const courses = getCoursesByYearSemester(yearSemester);
+                courseSelect.innerHTML = '<option value="">--Select Course--</option>';
+                courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.code;
+                    option.textContent = `${course.code} - ${course.name}`;
+                    courseSelect.appendChild(option);
+                });
+            } else {
+                courseSelect.disabled = true;
+            }
+        }
+
+        // Simulated function to fetch courses based on Year-Semester
+        function getCoursesByYearSemester(yearSemester) {
+            const coursesDatabase = {
+                '1-1': [
+                    { code: 'CS101', name: 'Introduction to Programming' },
+                    { code: 'MATH101', name: 'Mathematics 1' }
+                ],
+                '1-2': [
+                    { code: 'CS102', name: 'Data Structures' },
+                    { code: 'PHYS101', name: 'Physics 1' }
+                ],
+                // Add more data for other year-semester combinations...
+            };
+            return coursesDatabase[yearSemester] || [];
+        }
+
+        // Function to view attendance after applying filters
+        function viewAttendance() {
+            const yearSemester = document.getElementById('year-semester').value;
+            const courseCode = document.getElementById('course-code').value;
+
+            if (!yearSemester || !courseCode) {
+                alert("Please select both Year-Semester and Course Code.");
+                return;
+            }
+
+            const attendanceRecords = getAttendanceByCourse(yearSemester, courseCode);
+            const tableBody = document.getElementById('attendanceTable').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear previous rows
+
+            if (attendanceRecords.length === 0) {
+                const noResultsRow = document.createElement('tr');
+                noResultsRow.classList.add('no-results');
+                noResultsRow.innerHTML = '<td colspan="5">No attendance records found.</td>';
+                tableBody.appendChild(noResultsRow);
+            } else {
+                attendanceRecords.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${record.courseCode}</td>
+                        <td>${record.studentName}</td>
+                        <td>${record.totalClasses}</td>
+                        <td>${record.classesAttended}</td>
+                        <td>${record.attendancePercentage}%</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        // Simulated function to fetch attendance records
+        function getAttendanceByCourse(yearSemester, courseCode) {
+            const attendanceDatabase = [
+                { courseCode: 'CS101', studentName: 'John Doe', totalClasses: 30, classesAttended: 28, attendancePercentage: 93, semester: '1-1' },
+                { courseCode: 'CS102', studentName: 'Jane Smith', totalClasses: 30, classesAttended: 25, attendancePercentage: 83, semester: '1-2' },
+                { courseCode: 'MATH101', studentName: 'Alice Brown', totalClasses: 30, classesAttended: 30, attendancePercentage: 100, semester: '1-1' }
+            ];
+            return attendanceDatabase.filter(record => record.semester === yearSemester && record.courseCode === courseCode);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='form_style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Manage Marks</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 100px auto;
+
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-header h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f4f4f4;
+        }
+
+        .form-submit {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-submit button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-submit button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="checkbox" id="nav-toggle">
+    <div class="slidebar">
+        <div class="slidebar-brand">
+            <h2>Teacher profile</h2>
+        </div>
+
+        <div class="slidebar-manu">
+            <ul>
+                <li>
+                    <a href="{{ url_for('teacher_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('edit_profile') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span> Edit Profile</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>ADD Result</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_results') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Result</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>View Attendance</span></a>
+                <li>
+                    <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
+                        <span>Change Password</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('notice_board') }}" id="s4"><span><i class="fa-sharp fa-solid fa-bell"></i></span>
+                        <span>Notice Board</span></a>
+                </li>
+            </ul>
+
+            <ul class="Special">
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span><i class="fa fa-sign-out"></i></span>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1 class="menu">
+                <label for="nav-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </label>
+            </h1>
+
+            <div class="logo">
+                <img src="static/justlogo.jpg" width="70px" height="70px" alt="">
+            </div>
+            <div>
+                <h3 id="or">Jashore University of Science and Technology</h3>
+            </div>
+
+            <div class="icon">
+                <ul>
+                    <li>
+                        <a href="Edit.html"><i class="fa fa-user"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Manage Marks</h2>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="session">Session</label>
+                    <select id="session">
+                        <option value="">--Select Session--</option>
+                        <option value="2023-24">2023-2024</option>
+                        <option value="2022-23">2022-2023</option>
+                        <option value="2021-22">2021-2022</option>
+                        <option value="2020-21">2020-2021</option>
+                        <option value="2019-20">2019-2020</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="semester">Semester</label>
+                    <select id="semester">
+                        <option value="">--Select Semester--</option>
+                        <option value="1-1">1-1</option>
+                        <option value="1-2">1-2</option>
+                        <option value="2-1">2-1</option>
+                        <option value="2-2">2-2</option>
+                        <option value="3-1">3-1</option>
+                        <option value="3-2">3-2</option>
+                        <option value="4-1">4-1</option>
+                        <option value="4-2">4-2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="course_code">Course Code</label>
+                    <select id="course_code">
+                        <option value="">--Select Course Code--</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exam_type">Exam Type</label>
+                    <select id="exam_type">
+                        <option value="">--Select Exam Type--</option>
+                        <option value="CT-1">CT-1</option>
+                        <option value="CT-2">CT-2</option>
+                        <option value="CT-3">CT-3</option>
+                        <option value="ASSIGNMENT-1">ASSIGNMENT-1</option>
+                        <option value="ASSIGNMENT-2">ASSIGNMENT-2</option>
+                        <option value="QUIZ-1">QUIZ-1</option>
+                        <option value="QUIZ-2">QUIZ-2</option>
+                    </select>
+                </div>
+            </div>
+    
+            <div id="results-container">
+                <h3>Student Marks</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Course </th>
+                            <th>Exam Type</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-table">
+                        <!-- Dynamic rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+    
+            <div class="form-submit">
+                <button type="button" onclick="submitMarks()">Save Marks</button>
+            </div>
+        </div>
+    
+        <script>
+        // Fetch course codes dynamically based on semester selection
+        function fetchCourseCodes() {
+            // Fetch the courses assigned to the logged-in teacher
+            fetch(`/get_coursess`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const courseCodeSelect = document.getElementById("course_code");
+        
+                    // Clear existing course code options
+                    courseCodeSelect.innerHTML = "<option value=''>--Select Course Code--</option>";
+        
+                    if (data.courses && data.courses.length > 0) {
+                        // Populate the dropdown with assigned courses
+                        data.courses.forEach(course => {
+                            const option = document.createElement("option");
+                            option.value = course.course_code;
+                            option.textContent = `${course.course_code}`;
+                            courseCodeSelect.appendChild(option);
+                        });
+                    } else {
+                        alert("No courses found.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching courses:", error);
+                    alert("Failed to fetch courses. Please try again.");
+                });
+        }
+        
+        
+
+// Attach event listener to semester dropdown
+document.getElementById("semester").addEventListener("change", fetchCourseCodes);
+
+
+            function fetchResults() {
+                const session = document.getElementById("session").value;
+                const semester = document.getElementById("semester").value;
+                const courseCode = document.getElementById("course_code").value;
+                const examType = document.getElementById("exam_type").value;
+            
+                const tableBody = document.getElementById("results-table");
+                tableBody.innerHTML = "";
+        
+                if (session && semester && courseCode && examType) {
+                    fetch(`/fetch_students?session=${session}&semester=${semester}&course_code=${courseCode}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.students.length === 0) {
+                                tableBody.innerHTML = "<tr><td colspan='4'>No students found</td></tr>";
+                            } else {
+                                data.students.forEach(student => {
+                                    const row = `
+                                        <tr>
+                                            <td>${student.roll_number}</td>
+                                            <td>${courseCode}</td>
+                                            <td>${examType}</td>
+                                            <td><input type='number' name='marks_${student.roll_number}' placeholder='Enter Marks'></td>
+                                        </tr>`;
+                                    tableBody.innerHTML += row;
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching students:", error);
+                            alert("Failed to fetch student data. Please try again.");
+                        });
+                }
+            }
+        
+            function submitMarks() {
+                const courseCode = document.getElementById("course_code").value;
+                const examType = document.getElementById("exam_type").value;
+        
+                const marks = [];
+                const rows = document.querySelectorAll("#results-table tr");
+        
+                rows.forEach(row => {
+                    const studentId = row.cells[0].innerText;
+                    const marksInput = row.cells[3].querySelector("input").value;
+        
+                    if (marksInput.trim() !== "") {
+                        marks.push({
+                            roll_number: studentId,
+                            course_code: courseCode,
+                            exam_type: examType,
+                            marks: parseFloat(marksInput)
+                        });
+                    }
+                });
+        
+                if (marks.length === 0) {
+                    alert("No marks entered.");
+                    return;
+                }
+        
+                fetch("/submit_marks", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ marks })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Server error occurred while saving marks.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message) {
+                            alert(data.message);
+                            document.querySelectorAll("#results-table input").forEach(input => {
+                                input.value = "";
+                            });
+                        } else {
+                            alert("An error occurred while saving marks.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving marks:", error);
+                        alert("Failed to submit marks. Please try again later.");
+                    });
+            }
+        
+            // Event listeners
+            document.getElementById("semester").addEventListener("change", () => {
+                updateCourseCodes();
+                fetchResults(); // Fetch results whenever the semester or course code changes
+            });
+            document.getElementById("course_code").addEventListener("change", fetchResults);
+            document.getElementById("exam_type").addEventListener("change", fetchResults);
+        </script>
+        
+        
+    </body>
+    
+    </html>
+    

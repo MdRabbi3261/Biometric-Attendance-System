@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chairman Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Add Font Awesome for the eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .input-container {
+            position: relative;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chairman Registration</h1>
+
+        <form action="/chairman_register" method="post" id="teacherForm">
+            <!-- Name -->
+            <label for="name">Name</label>
+            <input type="text" name="name" value="{{ name or '' }}" placeholder="Name" required>
+
+            <!-- Email -->
+            <label for="email">Email</label>
+            <input type="email" name="email" value="{{ email or '' }}" placeholder="Email" required>
+
+            <!-- Mobile Number -->
+            <label for="mobile_number">Mobile Number</label>
+            <input type="text" name="mobile_number" value="{{ mobile_number or '' }}" placeholder="Mobile Number" required>
+
+            <!-- Password -->
+            <label for="password">Password</label>
+            <div class="input-container">
+                <input type="password" name="password" id="password" value="{{ password or '' }}" placeholder="Password" required>
+                <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                    <i id="passwordIcon" class="fas fa-eye"></i> <!-- Font Awesome Eye Icon -->
+                </span>
+            </div>
+
+            <!-- Confirm Password -->
+            <label for="confirm_password">Confirm Password</label>
+            <div class="input-container">
+                <input type="password" name="confirm_password" id="confirm_password" value="{{ confirm_password or '' }}" placeholder="Confirm password" required>
+                <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
+                    <i id="confirmPasswordIcon" class="fas fa-eye"></i> <!-- Font Awesome Eye Icon -->
+                </span>
+            </div>
+
+            <!-- Department -->
+            <label for="department">Department</label>
+            <select name="department" id="department" required>
+                <option value="" disabled selected>Select Department</option>
+                <option value="Computer Science" {% if department == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+                <option value="Electrical Engineering" {% if department == 'Electrical Engineering' %}selected{% endif %}>Electrical Engineering</option>
+                <option value="Mechanical Engineering" {% if department == 'Mechanical Engineering' %}selected{% endif %}>Mechanical Engineering</option>
+                <option value="Civil Engineering" {% if department == 'Civil Engineering' %}selected{% endif %}>Civil Engineering</option>
+                <option value="Business Administration" {% if department == 'Business Administration' %}selected{% endif %}>Business Administration</option>
+            </select>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Submit Button -->
+            <button type="submit">Register</button>
+        </form>
+
+        <!-- Go Back Button -->
+        <button onclick="location.href='{{ url_for('register') }}'">Go Back</button>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(fieldId + 'Icon');
+
+            if (field.type === "password") {
+                field.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

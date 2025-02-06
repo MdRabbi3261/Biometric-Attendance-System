@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function showFields(userType) {
+            // Hide all optional fields initially
+            document.getElementById('roll_number_field').style.display = 'none';
+            document.getElementById('session_field').style.display = 'none';
+            document.getElementById('designation_field').style.display = 'none';
+            
+            // Show fields based on user type
+            if (userType === 'student') {
+                document.getElementById('roll_number_field').style.display = 'block';
+                document.getElementById('session_field').style.display = 'block';
+            } else if (userType === 'teacher' || userType === 'staff') {
+                document.getElementById('designation_field').style.display = 'block';
+            }
+        }
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>User Registration</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('user_register') }}" method="post" id="userForm">
+            <label for="Name">Name</label>
+            <input type="text" name="name" value="{{ name or '' }}" placeholder="Name" required>
+
+            <label for="Email">Email</label>
+            <input type="email" name="email" value="{{ email or '' }}" placeholder="Email" required>
+
+            <label for="Mobile Number">Mobile Number</label>
+            <input type="number" name="mobile_number" value="{{ mobile_number or '' }}" placeholder="Mobile Number" required>
+
+            <label for="Password">Password</label>
+            <input type="password" name="password" value="{{ password or '' }}" placeholder="Password" required>
+
+            <label for="Confirm password">Confirm password</label>
+            <input type="password" name="confirm_password" value="{{ confirm_password or '' }}" placeholder="Confirm password" required>
+
+            <label for="Department">Department</label>
+            <select name="department" id="department" required>
+                <option value="" disabled selected>Select Department</option>
+                <option value="CSE" {% if department == 'CSE' %}selected{% endif %}>CSE</option>
+                <option value="EEE" {% if department == 'EEE' %}selected{% endif %}>EEE</option>
+                <option value="ME" {% if department == 'ME' %}selected{% endif %}>ME</option>
+                <option value="CE" {% if department == 'CE' %}selected{% endif %}>CE</option>
+                <option value="BBA" {% if department == 'BBA' %}selected{% endif %}>BBA</option>
+            </select>
+
+            <label for="User">User</label>
+            <select name="user_type" id="user_type" required onchange="showFields(this.value)">
+                <option value="" disabled selected>Select User type</option>
+                <option value="student">student</option>
+                <option value="teacher">teacher</option>
+                <option value="chairman">chairman</option>
+                <option value="staff">staff</option>
+            </select>
+
+            <div id="roll_number_field" style="display:none;">
+                <label for="Roll Number">Roll Number</label>
+                <input type="number" name="roll_number" value="{{ roll_number or '' }}" placeholder="Roll Number" required>
+            </div>
+
+            <div id="session_field" style="display:none;">
+                <label for="Session">Session</label>
+                <select name="Session" id="Session" required>
+                    <option value="" disabled selected>Select Session</option>
+                    <option value="2018-19" {% if session_value == '2018-19' %}selected{% endif %}>2018-19</option>
+                    <option value="2019-20" {% if session_value == '2019-20' %}selected{% endif %}>2019-20</option>
+                    <!-- Add other sessions -->
+                </select>
+            </div>
+
+            <div id="designation_field" style="display:none;">
+                <label for="Designation">Designation</label>
+                <select name="designation" required>
+                    <option value="" disabled selected>Select Designation</option>
+                    <option value="Professor" {% if designation == 'Professor' %}selected{% endif %}>Professor</option>
+                    <option value="Assistant Professor" {% if designation == 'Assistant Professor' %}selected{% endif %}>Assistant Professor</option>
+                    <!-- Add other designations -->
+                </select>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+        <button onclick="location.href='{{ url_for('login') }}'">Log in</button>
+    </div>
+</body>
+</html>

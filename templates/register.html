@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Registration</h1>
+        <p>What type of registration would you like to perform?</p>
+        <button onclick="location.href='{{ url_for('student_register') }}'">Student</button>
+        <button onclick="location.href='{{ url_for('teacher_register') }}'">Teacher</button>
+        <button onclick="location.href='{{ url_for('chairman_register') }}'">Chairman</button>
+        <button onclick="location.href='{{ url_for('staff_register') }}'">Staff</button>
+        <br>
+        <button onclick="location.href='{{ url_for('home') }}'">Go Back</button>
+    </div>
+</body>
+</html>
