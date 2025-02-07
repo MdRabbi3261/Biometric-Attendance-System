@@ -129,6 +129,11 @@
                 <li>
                     <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
                         <span>View Attendance</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_class') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Add Class</span></a>
+                </li>
                 <li>
                     <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
                         <span>Change Password</span></a>
@@ -325,65 +330,68 @@ document.getElementById("semester").addEventListener("change", fetchCourseCodes)
             }
         
             function submitMarks() {
-                const courseCode = document.getElementById("course_code").value;
-                const examType = document.getElementById("exam_type").value;
-        
-                const marks = [];
-                const rows = document.querySelectorAll("#results-table tr");
-        
-                rows.forEach(row => {
-                    const studentId = row.cells[0].innerText;
-                    const marksInput = row.cells[3].querySelector("input").value;
-        
-                    if (marksInput.trim() !== "") {
-                        marks.push({
-                            roll_number: studentId,
-                            course_code: courseCode,
-                            exam_type: examType,
-                            marks: parseFloat(marksInput)
-                        });
-                    }
-                });
-        
-                if (marks.length === 0) {
-                    alert("No marks entered.");
-                    return;
-                }
-        
-                fetch("/submit_marks", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ marks })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Server error occurred while saving marks.");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.message) {
-                            alert(data.message);
-                            document.querySelectorAll("#results-table input").forEach(input => {
-                                input.value = "";
-                            });
-                        } else {
-                            alert("An error occurred while saving marks.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error saving marks:", error);
-                        alert("Failed to submit marks. Please try again later.");
-                    });
-            }
-        
-            // Event listeners
-            document.getElementById("semester").addEventListener("change", () => {
-                updateCourseCodes();
-                fetchResults(); // Fetch results whenever the semester or course code changes
+    const session = document.getElementById("session").value;
+    const semester = document.getElementById("semester").value;
+    const courseCode = document.getElementById("course_code").value;
+    const examType = document.getElementById("exam_type").value;
+
+    if (!session || !semester || !courseCode || !examType) {
+        alert("Please fill all fields (Session, Semester, Course Code, Exam Type).");
+        return;
+    }
+
+    const marks = [];
+    const rows = document.querySelectorAll("#results-table tr");
+
+    rows.forEach(row => {
+        const studentId = row.cells[0].innerText;
+        const marksInput = row.cells[3].querySelector("input").value;
+
+        if (marksInput.trim() !== "") {
+            marks.push({
+                roll_number: studentId,
+                session: session,
+                semester: semester,
+                course_code: courseCode,
+                exam_type: examType,
+                marks: parseFloat(marksInput)
             });
-            document.getElementById("course_code").addEventListener("change", fetchResults);
-            document.getElementById("exam_type").addEventListener("change", fetchResults);
+        }
+    });
+
+    console.log("Marks to submit:", marks);  // Log the data being sent
+
+    if (marks.length === 0) {
+        alert("No marks entered.");
+        return;
+    }
+
+    fetch("/submit_marks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ marks })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Server error occurred while saving marks.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                document.querySelectorAll("#results-table input").forEach(input => {
+                    input.value = "";
+                });
+            } else {
+                alert("An error occurred while saving marks.");
+            }
+        })
+        .catch(error => {
+            console.error("Error saving marks:", error);
+            alert("Failed to submit marks. Please try again later.");
+        });
+}
         </script>
         
         

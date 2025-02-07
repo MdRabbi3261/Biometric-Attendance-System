@@ -172,6 +172,11 @@
                 <li>
                 <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
                     <span>View Attendance</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_class') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Add Class</span></a>
+                </li>
                 <li>
                     <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
                         <span>Change Password</span></a>
@@ -299,7 +304,17 @@
                     <label for="roll_number">Roll Number</label>
                     <input type="text" class="rabbi" id="roll_number" placeholder="Enter Roll Number" />
                 </div>
-
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department">
+                        <option value="">--Select Department--</option>
+                        <option value="CSE">CSE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="BBA">BBA</option>
+                        <option value="ME">ME</option>
+                    </select>
+                </div>
+                
                 <div class="form-group">
                     <label for="semester">Semester</label>
                     <select id="semester">
@@ -314,12 +329,14 @@
                         <option value="4-2">4-2</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
                     <label for="course_code">Course Code</label>
                     <select id="course_code">
                         <option value="">--Select Course Code--</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
                     <label for="exam_type">Exam Type</label>
                     <select id="exam_type">
@@ -355,33 +372,43 @@
     
         <script>
 // Fetch course codes dynamically based on semester selection
-function fetchCourseCodes() {
+function fetchCourses() {
     const semester = document.getElementById("semester").value;
+    const department = document.getElementById("department").value;
 
-    if (!semester) {
-        alert("Please select a semester!");
+    // Ensure both semester and department are selected
+    if (!semester || !department) {
+        console.log("Semester and department must be selected before fetching courses.");
         return;
     }
 
-    fetch(`/get_courses?semester=${semester}`)
-        .then(response => response.json())
+    const url = `/get_courses?semester=${encodeURIComponent(semester)}&department=${encodeURIComponent(department)}`;
+
+    console.log("Fetching courses from:", url);  // Debugging log
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            const courseCodeSelect = document.getElementById("course_code");
+            const courseCodeDropdown = document.getElementById("course_code");
 
-            // Clear existing course code options
-            courseCodeSelect.innerHTML = "<option value=''>--Select Course Code--</option>";
+            // Clear existing course options
+            courseCodeDropdown.innerHTML = "<option value=''>--Select Course Code--</option>";
 
-            if (data.courses && data.courses.length > 0) {
-                // Add new course codes to the dropdown
+            if (data.error) {
+                alert(data.error);
+            } else {
+                // Populate the course dropdown with fetched courses
                 data.courses.forEach(course => {
                     const option = document.createElement("option");
                     option.value = course.course_code;
-                    option.textContent = course.course_code;
-                    courseCodeSelect.appendChild(option);
+                    option.textContent = `${course.course_code}`;
+                    courseCodeDropdown.appendChild(option);
                 });
-            } else {
-                // If no courses are found
-                alert("No courses found for the selected semester.");
             }
         })
         .catch(error => {
@@ -390,10 +417,13 @@ function fetchCourseCodes() {
         });
 }
 
-// Attach event listener to semester dropdown
-document.getElementById("semester").addEventListener("change", fetchCourseCodes);
+// Ensure event listeners trigger `fetchCourses` correctly
+document.getElementById("semester").addEventListener("change", fetchCourses);
+document.getElementById("department").addEventListener("change", fetchCourses);
 
 
+
+// Fetch results based on inputs
 // Fetch results based on inputs
 function fetchResults() {
     const rollNumber = document.getElementById("roll_number").value;
@@ -405,14 +435,23 @@ function fetchResults() {
 
     // Check if all required inputs are selected
     if (rollNumber && courseCode && examType) {
-        let url = `/get_results?roll_number=${rollNumber}`;
-        if (courseCode) url += `&course_code=${courseCode}`;
-        if (examType) url += `&exam_type=${examType}`;
+        let url = `/get_results?roll_number=${rollNumber}&course_code=${courseCode}&exam_type=${examType}`;
+
+        // Debug: Log the URL being called
+        console.log("Fetching results from:", url);
 
         // Fetch results from the backend
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                // Debug: Log the response data
+                console.log("Response data:", data);
+
                 if (data.results && data.results.length > 0) {
                     // If results are available, display them in the table
                     data.results.forEach(result => {
@@ -434,19 +473,12 @@ function fetchResults() {
                 console.error("Error fetching results:", error);
                 alert("Failed to fetch results. Please try again.");
             });
-    } else {
-        // If required fields are missing
-        alert("Please enter roll number, select course code, and exam type.");
-    }
+    } 
 }
 
-// Event listeners to trigger actions when input fields are changed
-document.getElementById("semester").addEventListener("change", () => {
-    updateCourseCodes(); // Update course codes when semester changes
-});
-     document.getElementById("course_code").addEventListener("change", fetchResults); // Fetch results when course code changes
-     document.getElementById("exam_type").addEventListener("change", fetchResults); // Fetch results when exam type changes
-
+// Ensure event listeners trigger `fetchResults` correctly
+document.getElementById("course_code").addEventListener("change", fetchResults);
+document.getElementById("exam_type").addEventListener("change", fetchResults);
 </script>
     
     

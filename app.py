@@ -1,4 +1,5 @@
 import csv
+import logging
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
 from datetime import datetime
@@ -834,38 +835,41 @@ def edit_profile():
 @app.route('/submit_marks', methods=['POST'])
 def submit_marks():
     try:
-        # Extract teacher's name from session
         teacher_name = session.get('teacher_name')
+        if not teacher_name:
+            return jsonify({"error": "Unauthorized: Please log in"}), 403
+
         data = request.json
+        print("Received data:", data)  # Log incoming data
         marks = data.get('marks', [])
 
         if not marks:
             return jsonify({"error": "Marks data is required"}), 400
 
-        # Validate that all courses are assigned to the teacher
         course_code = marks[0]['course_code']
         exam_type = marks[0]['exam_type']
 
         cursor = mydb.cursor(dictionary=True)
 
-        # Verify the teacher's assignment
+        # Verify if the teacher is assigned to this course
         verify_query = """
-            SELECT 1
-            FROM teacher_course_assign
-            WHERE teacher_name = %s AND course_code = %s
+            SELECT 1 FROM teacher_course_assign WHERE teacher_name = %s AND course_code = %s
         """
-        cursor.execute(verify_query, (teacher_name, course_code))
+        cursor.execute(verify_query, (teacher_name, course_code,))
         if not cursor.fetchone():
             return jsonify({"error": "You are not assigned to this course"}), 403
 
-        # Insert marks into the database
+        # Insert or update marks in the `result` table
         for mark in marks:
             query = """
-                INSERT INTO marks (roll_number, course_code, exam_type, marks)
-                VALUES (%s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE marks = VALUES(marks)
+                INSERT INTO result (roll_number, session, semester, course_code, exam_type, marks)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE marks = %s
             """
-            params = (mark['roll_number'], mark['course_code'], mark['exam_type'], mark['marks'])
+            params = (
+                mark['roll_number'], mark['session'], mark['semester'],
+                mark['course_code'], mark['exam_type'], mark['marks'], mark['marks']
+            )
             cursor.execute(query, params)
 
         mydb.commit()
@@ -873,9 +877,11 @@ def submit_marks():
 
     except Exception as e:
         print(f"Error submitting marks: {e}")
+        traceback.print_exc()  # Log the full traceback
+        mydb.rollback()
         return jsonify({"error": "Failed to submit marks"}), 500
 
-
+import traceback
 
 @app.route('/get_results', methods=['GET'])
 def get_results():
@@ -893,8 +899,14 @@ def get_results():
     """
 
     try:
-       
+        # Debug: Print the query and parameters
+        print(f"Executing query: {query}")
+        print(f"Parameters: roll_number={roll_number}, course_code={course_code}, exam_type={exam_type}")
+
         results = execute_query(query, (roll_number, course_code, exam_type), fetch=True)
+
+        # Debug: Print the results fetched from the database
+        print(f"Results from database: {results}")
 
         if not results:
             return jsonify({"results": []})
@@ -907,12 +919,15 @@ def get_results():
                 'exam_type': result['exam_type'],
                 'marks': result['marks']
             })
+
+        # Debug: Print the final data being returned
+        print(f"Returning data: {results_data}")
+
         return jsonify({"results": results_data})
 
     except Exception as e:
         print(f"Database Error: {e}")
         return jsonify({"error": "Failed to fetch results from the database"}), 500
-    
     
 @app.route('/get_students', methods=['GET'])
 def get_students():
@@ -1158,7 +1173,7 @@ def get_courses():
         return {"error": str(e)}, 500
 
     
-    
+
 
 @app.route('/get_teachers', methods=['GET'])
 def get_teachers():

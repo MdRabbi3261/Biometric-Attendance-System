@@ -124,6 +124,11 @@
                     <a href="{{ url_for('view_attendance') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
                         <span>View Attendance</span></a>
                 </li>
+            
+                <li>
+                    <a href="{{ url_for('add_class') }}" id="s1"><span><i class="fa-solid fa-calendar-days"></i></span>
+                        <span>Add Class</span></a>
+                </li>
                 <li>
                     <a href="{{ url_for('change_password') }}" id="s2"><span><i class='fas fa-users'></i></span>
                         <span>Change Password</span></a>
@@ -188,7 +193,7 @@
         <form method="POST" action="{{ url_for('add_class') }}">
             <div class="form-group">
                 <label for="session">Session</label>
-                <select id="session">
+                <select id="session" name="session">
                     <option value="">--Select Session--</option>
                     <option value="2023-24">2023-2024</option>
                     <option value="2022-23">2022-2023</option>
@@ -199,7 +204,7 @@
             </div>
             <div class="form-group">
                 <label for="semester">Semester</label>
-                <select id="semester">
+                <select id="semester" name="semester">
                     <option value="">--Select Semester--</option>
                     <option value="1-1">1-1</option>
                     <option value="1-2">1-2</option>
@@ -213,29 +218,28 @@
             </div>
             <div class="form-group">
                 <label for="course_code">Course Code</label>
-                <select id="course_code">
+                <select id="course_code" name="course_code">
                     <option value="">--Select Course Code--</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="class_date">Class Date</label>
-                <input type="date" id="class_date" required>
+                <input type="date" id="class_date" name="class_date" required>
             </div>
             <div class="form-group">
                 <label for="start_time">Start Time</label>
-                <input type="time" id="start_time" required>
+                <input type="time" id="start_time" name="start_time" required>
             </div>
             <div class="form-group">
                 <label for="end_time">End Time</label>
-                <input type="time" id="end_time" required>
+                <input type="time" id="end_time" name="end_time" required>
             </div>
-        </div>
-
-
-        <div class="form-submit">
-            <button type="submit">Set Class</button>
-        </div>
-    </div>
+        
+            <div class="form-submit">
+                <button type="submit">Set Class</button>
+            </div>
+        </form>
+        
 
     <script>
         function fetchCourseCodes() {
@@ -272,12 +276,12 @@
         }
 
         function setClass() {
-            const session = document.getElementById("session").value;
-            const semester = document.getElementById("semester").value;
-            const courseCode = document.getElementById("course_code").value;
-            const date = document.getElementById("class_date").value;
-            const startTime = document.getElementById("start_time").value;
-            const endTime = document.getElementById("end_time").value;
+            const session = document.querySelector("[name='session']").value;
+            const semester = document.querySelector("[name='semester']").value;
+            const courseCode = document.querySelector("[name='course_code']").value;
+            const date = document.querySelector("[name='class_date']").value;
+            const startTime = document.querySelector("[name='start_time']").value;
+            const endTime = document.querySelector("[name='end_time']").value;
 
             if (!session || !semester || !courseCode || !date || !startTime || !endTime) {
                 alert("Please fill out all fields before setting the class.");
