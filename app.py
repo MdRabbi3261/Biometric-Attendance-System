@@ -1410,39 +1410,52 @@ def show_feedback():
         return render_template('show_feedback.html', feedbacks=[])
 
 
+def convert_to_12_hour_format(time_str):
+    """
+    Convert 24-hour time format to 12-hour format with AM/PM.
+    Example: "14:30" -> "02:30 PM"
+    """
+    try:
+        time_obj = datetime.strptime(time_str, '%H:%M')
+        return time_obj.strftime('%I:%M %p')
+    except ValueError:
+        return time_str  # Return the original string if conversion fails
+
 @app.route('/add_class', methods=['GET', 'POST'])
 def add_class():
     if request.method == 'POST':
-        # Get form data
+        # Retrieve form data
         session = request.form.get('session')
         semester = request.form.get('semester')
         course_code = request.form.get('course_code')
         class_date = request.form.get('class_date')
-        start_time = request.form.get('start_time')
-        end_time = request.form.get('end_time')
+        start_time_24h = request.form.get('start_time')
+        end_time_24h = request.form.get('end_time')
 
-        # Validate the data
-        if not session or not semester or not course_code or not class_date or not start_time or not end_time:
+        # Validate required fields
+        if not session or not semester or not course_code or not class_date or not start_time_24h or not end_time_24h:
             flash("All fields are required.", "error")
             return redirect(url_for('add_class'))
 
         try:
-            # Insert data into the database
+            # Convert 24-hour time to 12-hour format
+            start_time_12h = convert_to_12_hour_format(start_time_24h)
+            end_time_12h = convert_to_12_hour_format(end_time_24h)
+
+            # Insert into the database
             query = """
                 INSERT INTO classes (session, semester, course_code, class_date, start_time, end_time)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """
-            execute_query(query, (session, semester, course_code, class_date, start_time, end_time))
+            execute_query(query, (session, semester, course_code, class_date, start_time_12h, end_time_12h))
 
             flash("Class added successfully!", "success")
             return redirect(url_for('add_class'))
         except Exception as e:
             flash(f"An error occurred: {str(e)}", "error")
             return redirect(url_for('add_class'))
-    
-    # For GET requests, render the form
-    return render_template('add_class.html')
 
+    return render_template('add_class.html')
 
 if__name__='__main__'
 app.run(debug=True)
