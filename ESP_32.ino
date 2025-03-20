@@ -14,12 +14,13 @@
 //******************************* Fingerprint Sensor Pins ********************************
 const byte rxPin = 18; // GPIO18 for RX
 const byte txPin = 17; // GPIO17 for TX
+const int relayPin = 5; // GPIO5 for controlling the relay
 HardwareSerial fserial(1); // Use UART1 for Fingerprint Sensor
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&fserial);
 
 //******************************* WiFi Credentials ********************************
 const char *ssid = "LAPTOP-1DANAA2Q8309";
-const char *password = "50Z{40z5";
+const char *password = "12345678";
 const char* device_token  = "028ec80c";
 String getData, Link;
 String URL = "http://192.168.137.1/biometricattendancev2/getdata.php";
@@ -69,11 +70,16 @@ void setup() {
   digitalWrite(redLedPin, LOW);
   digitalWrite(greenLedPin, LOW);
 
+
   //Timers---------------------------------------
   timer.setInterval(25000L, CheckMode);
   t1 = timer.setInterval(10000L, ChecktoAddID);      //Set an internal timer every 10sec to check if there a new fingerprint in the website to add it.
   t2 = timer.setInterval(15000L, ChecktoDeleteID);   //Set an internal timer every 15sec to check wheater there an ID to delete in the website.
   //---------------------------------------------
+
+  pinMode(relayPin, OUTPUT);
+digitalWrite(relayPin, HIGH); // Ensure the relay is initially off
+
   CheckMode();
 }
 //************************************************************************
@@ -100,33 +106,34 @@ void CheckFingerprint(){
 //  Serial.println(millis() - previousMillisM);
   
 }
-//************Display the fingerprint ID state on the OLED*************
-void DisplayFingerprintID(){
-  //Fingerprint has been detected 
-  if (FingerID > 0){
+//*Display the fingerprint ID state on the OLED************
+void DisplayFingerprintID() {
+  if (FingerID > 0) {
+    turnOnGreenLED();
     buzzerBeep(200); // Short beep for a match
-    SendFingerprintID( FingerID ); // Send the Fingerprint ID to the website.
-    delay(2000);
-  }
-  //---------------------------------------------
-  //No finger detected
-  else if (FingerID == 0){
+    SendFingerprintID(FingerID); // Send the Fingerprint ID to the website
 
-  }
-  //---------------------------------------------
-  //Didn't find a match
-  else if (FingerID == -1){
+    // Unlock the door
+    Serial.println("Door unlocked");
+    digitalWrite(relayPin, LOW); // Turn on the relay to unlock the door
+    delay(3000); // Keep the door unlocked for 2 seconds
+    digitalWrite(relayPin, HIGH); // Turn off the relay to lock the door again
+    Serial.println("Door locked");
+  } 
+  else if (FingerID == 0) {
+    // No finger detected
+  } 
+  else if (FingerID == -1) {
+    Serial.println("fingerprint didn't match.");
+    Serial.println("Door locked");
     turnOnRedLED(); // Turn on red LED
     buzzerBeep(800); // Long beep for no match   
-  }
-  //---------------------------------------------
-  //Didn't find the scanner or there an error
-  else if (FingerID == -2){
-
+  } 
+  else if (FingerID == -2) {
     turnOnRedLED(); // Turn on red LED
   }
 }
-//************send the fingerprint ID to the website*************
+//*send the fingerprint ID to the website************
 void SendFingerprintID( int finger ){
   Serial.println("Sending the Fingerprint ID");
   if(WiFi.isConnected()){
@@ -161,7 +168,7 @@ void SendFingerprintID( int finger ){
     http.end();  //Close connection
   }
 }
-//********************Get the Fingerprint ID******************
+//*Get the Fingerprint ID*****************
 int  getFingerprintID() {
   uint8_t p = finger.getImage();
   switch (p) {
@@ -223,7 +230,7 @@ int  getFingerprintID() {
 
   return finger.fingerID;
 }
-//******************Check if there a Fingerprint ID to delete******************
+//*Check if there a Fingerprint ID to delete*****************
 void ChecktoDeleteID(){
   Serial.println("Check to Delete ID");
   if(WiFi.isConnected()){
@@ -247,7 +254,7 @@ void ChecktoDeleteID(){
     http.end();  //Close connection
   }
 }
-//******************Delete Finpgerprint ID*****************
+//*Delete Finpgerprint ID****************
 uint8_t deleteFingerprint( int id) {
   uint8_t p = -1;
   
@@ -270,7 +277,7 @@ uint8_t deleteFingerprint( int id) {
     return p;
   }   
 }
-//******************Check if there a Fingerprint ID to add******************
+//*Check if there a Fingerprint ID to add*****************
 void ChecktoAddID(){
 //  Serial.println("Check to Add ID");
   if(WiFi.isConnected()){
@@ -294,7 +301,7 @@ void ChecktoAddID(){
     http.end();  //Close connection
   }
 }
-//******************Check the Mode*****************
+//*Check the Mode****************
 void CheckMode(){
   Serial.println("Check Mode");
   if(WiFi.isConnected()){
@@ -335,7 +342,7 @@ void CheckMode(){
 //  Serial.print("Number of Timers: ");
 //  Serial.println(timer.getNumTimers());
 }
-//******************Enroll a Finpgerprint ID*****************
+//*Enroll a Finpgerprint ID****************
 uint8_t getFingerprintEnroll() {
   int p = -1;
 
@@ -478,7 +485,7 @@ uint8_t getFingerprintEnroll() {
     return p;
   }   
 }
-//******************Check if there a Fingerprint ID to add******************
+//*Check if there a Fingerprint ID to add*****************
 void confirmAdding(int id){
   Serial.println("confirm Adding");
   if(WiFi.status() == WL_CONNECTED){
@@ -503,7 +510,7 @@ void confirmAdding(int id){
     http.end();  //Close connection
   }
 }
-//********************connect to the WiFi******************
+//*connect to the WiFi*****************
 void connectToWiFi(){
     WiFi.mode(WIFI_OFF);        //Prevents reconnection issue (taking too long to connect)
     delay(1000);
